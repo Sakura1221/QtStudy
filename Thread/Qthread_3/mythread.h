@@ -1,12 +1,14 @@
 #ifndef MYTHREAD_H
 #define MYTHREAD_H
 
+#include <QObject>
+#include <QRunnable>
 #include <QThread>
 #include <QVector>
 
-// 生成随机数线程类
-// 注意是通过继承QThread来继承QObject，方便使用Qt自己的内存回收
-class Generate : public QThread
+// 生成随机数任务类，继承QRunnable，变成能在线程池内执行的任务类
+// 继承自QObject，方便使用信号槽，以及Qt自己的内存回收
+class Generate : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
@@ -16,9 +18,8 @@ public:
 
     void recvNum(int num);
 
-protected:
-    // 重载虚函数run()，后面加上override
-    // run()是一个protected的virtual函数，所以要加protected
+    // 重载纯虚函数run()，后面加上override
+    // run()是一个public的函数
     void run() override;
 signals:
     // 向主线程发送数据
@@ -28,7 +29,7 @@ private:
 };
 
 
-class BubbleSort : public QThread
+class BubbleSort : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
@@ -37,9 +38,8 @@ public:
 
     void recvArray(QVector<int> list);
 
-protected:
-    // 重载虚函数run()，后面加上override
-    // run()是一个protected的virtual函数，所以要加protected
+    // 重载纯虚函数run()，后面加上override
+    // run()是一个public的函数
     void run() override;
 
 signals:
@@ -50,7 +50,7 @@ private:
     QVector<int> m_list;
 };
 
-class QuickSort : public QThread
+class QuickSort : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
@@ -58,9 +58,8 @@ public:
 
     void recvArray(QVector<int> list);
 
-protected:
-    // 重载虚函数run()，后面加上override
-    // run()是一个protected的virtual函数，所以要加protected
+    // 重载纯虚函数run()，后面加上override
+    // run()是一个public的函数
     void run() override;
 
 private:

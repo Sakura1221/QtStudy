@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "mythread.h"
+#include <QThreadPool>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // 1.创建子线程对象
+    // 1.创建任务类对象
     Generate* gen = new Generate;
     BubbleSort* bubble = new BubbleSort;
     QuickSort* quick = new QuickSort;
@@ -23,7 +24,9 @@ MainWindow::MainWindow(QWidget *parent)
         // 启动前先向子线程发送数据
         // 设置一个带参数的信号，子线程内的recvNum槽函数可以接收参数（数据）
         emit starting(10000);
-        gen->start();
+        //  线程池调用接口
+        // 将生成随机数任务放到线程池内执行
+        QThreadPool::globalInstance()->start(gen);
     });
 
     // 3.其他线程接收线程发送的数据，对数据进行显示或处理
@@ -34,9 +37,9 @@ MainWindow::MainWindow(QWidget *parent)
     // 主线程接收，用randList显示
     connect(gen, &Generate::sendArray, this, [=] (QVector<int> list)
     {
-        // 启动两个子线程进行排序，相当于通过主线程实现了子线程间的同步
-        bubble->start();
-        quick->start();
+        // 将两个排序任务放到线程池内执行
+        QThreadPool::globalInstance()->start(bubble);
+        QThreadPool::globalInstance()->start( quick);
         for (int i = 0; i < list.size(); i ++)
         {
             ui->randList->addItem(QString::number(list[i]));
@@ -57,26 +60,6 @@ MainWindow::MainWindow(QWidget *parent)
         {
             ui->quickList->addItem(QString::number(list[i]));
         }
-    });
-
-    // 利用信号槽回收内存，当主窗口销毁时，回收内存
-    connect(this, &MainWindow::destroyed, this, [=] ()
-    {
-        gen->quit();
-        gen->wait();
-        gen->deleteLater(); // delete t1;
-
-        bubble->quit();
-        bubble->wait();
-        bubble->deleteLater(); // delete t1;
-
-        quick->quit();
-        quick->wait();
-        quick->deleteLater(); // delete t1;
-
-        gen->deleteLater();
-        bubble->deleteLater();
-        quick->deleteLater();
     });
 }
 

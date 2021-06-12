@@ -3,9 +3,10 @@
 #include <QDebug>
 
 // 注意继承的是QThread，传的是QObject，调用QThread的构造函数
-Generate::Generate(QObject *parent) : QThread(parent)
+Generate::Generate(QObject *parent) : QObject(parent), QRunnable()
 {
-
+    // 设置线程自动回收内存
+    setAutoDelete(true);
 }
 
 void Generate::recvNum(int num)
@@ -30,10 +31,12 @@ void Generate::run()
 }
 
 // 派生类调用基类构造函数，不要忘记将参数传入构造
-BubbleSort::BubbleSort(QObject *parent) : QThread(parent)
+BubbleSort::BubbleSort(QObject *parent) : QObject(parent), QRunnable()
 {
-
+    // 设置线程自动回收内存
+    setAutoDelete(true);
 }
+
 
 void BubbleSort::recvArray(QVector<int> list)
 {
@@ -59,10 +62,12 @@ void BubbleSort::run()
 
 
 // 派生类调用基类构造函数，不要忘记将参数传入构造
-QuickSort::QuickSort(QObject *parent) : QThread(parent)
+QuickSort::QuickSort(QObject *parent) : QObject(parent), QRunnable()
 {
-
+    // 设置线程自动回收内存
+    setAutoDelete(true);
 }
+
 
 void QuickSort::recvArray(QVector<int> list)
 {
