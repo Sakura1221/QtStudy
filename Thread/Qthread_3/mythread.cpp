@@ -2,7 +2,7 @@
 #include <QElapsedTimer>
 #include <QDebug>
 
-// 注意继承的是QThread，传的是QObject，调用QThread的构造函数
+// 多继承，QRunnable()无参数
 Generate::Generate(QObject *parent) : QObject(parent), QRunnable()
 {
     // 设置线程自动回收内存
