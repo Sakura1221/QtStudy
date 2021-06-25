@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ghost-1.png</file>
+        <file>ghost-2.png</file>
+        <file>ghost-3.png</file>
+        <file alias="2">down.png</file>
+        <file alias="1">up.png</file>
+    </qresource>
+</RCC>
